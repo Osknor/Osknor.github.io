@@ -35,7 +35,9 @@ var y = d3.scaleLinear()
 	.rangeRound([height, 0]);
 var ferg = [d3.color("blue"),d3.color("red"),d3.color("yellow"),d3.color("green")]
 
-
+d3.csv("morley.tsv", function(error, data) {
+	console.log(data);
+});
 
 var bluu = function (data) {
 	console.log(data);
