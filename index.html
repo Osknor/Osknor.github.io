@@ -1,92 +1,228 @@
 <!DOCTYPE html>
-		<button onclick="sorting()" >hello!</button>
-<svg width="960" height="500"></svg>
+<head>
+</head>
+	<select id = "selector" style="margin:5px"> 
+		<option value="MathSkills">Mathematical Skills</option>
+		<option value="Order">Reverse Procrastionation</option>
+		<option value="GxSkills">Computer Graphics</option>
+		<option value="ComSkills">Communication Skills</option>
+		<option value="Interest">Hobbies & Interests</option>
+		<option value="ProgSkills">Programming</option>
+		<option value="EvSkills">Evaluation</option>
+		<option value="VisSkills">Visualization</option>
+		<option value="StatSkills">Statistics</option>
+		<option value="MathSkills">Mathematics</option>
+		<option value="DrawSkills">Art and Drawing</option>
+		<option value="Brevity">Brevity</option>
+		<option value="IntSkills">Human-computer Interaction</option>
+		<option value="CollabSkills">Collaberation Skills</option>
+		<option value="GitSkills">Code Repository Skills</option>
+		<option value="UseSkills">Computer Usage Skills</option>
+
+		
+	</select> <input type="checkbox" value="shhed" class="shed" name="shedding"> Sheduling (If there are groups the program will after sorting try to balance the groups on all Skills)
+	<br>
+	<div id="filtret"> 
+		<input type="checkbox" value="GxSkills" class="filter" name="Graphics" style="margin-left:5px;outline:5px; outline-color:aqua" checked > Computer Graphics
+		<input type="checkbox" value="ProgSkills" class="filter" name="Programming"checked> Programming
+		<input type="checkbox" value="EvSkills" class="filter" name="Evaluation" checked> Evaluation
+		<input type="checkbox" value="VisSkills" class="filter" name="Visualization" checked> Visualization
+		<input type="checkbox" value="StatSkills" class="filter" name="Statitics"checked> Statistics
+		<input type="checkbox" value="MathSkills" class="filter" name="Mathematics" checked> Mathematics
+		<input type="checkbox" value="DrawSkills" class="filter" name="Art and Drawing" checked>Art and Drawing
+		<input type="checkbox" value="IntSkills" class="filter" name="Programming"checked> Human-computer Interaction
+		<input type="checkbox" value="ComSkills" class="filter" name="Evaluation" checked> Communication
+		<input type="checkbox" value="CollabSkills" class="filter" name="Programming"checked> Collaberation
+		<input type="checkbox" value="GitSkills" class="filter" name="Evaluation" checked> Code Repository
+		<input type="checkbox" value="UseSkills" class="filter" name="Usage" checked> Computer Usage
+	</div>
+	<button type="button" id= "People">People</button>
+	<button type="button" id = "Groups">Groups</button>
+<svg width="1300" height="750"></svg>
+<select id = "selector2" style="margin:5px"> 
+		<option value="Group 1">Group 1</option>
+		<option value="Group 2">Group 2</option>
+		<option value="Group 3">Group 3</option>
+		<option value="Group 4">Group 4</option>
+		<option value="Group 5">Group 5</option>
+		<option value="Group 6">Group 6</option>
+		<option value="Group 7">Group 7</option>
+		<option value="Group 8">Group 8</option>
+		<option value="Group 9">Group 9</option>
+		<option value="Group 10">Group 10</option>
+
+
+		
+	</select>
+<button type="button" id = "Show">Show Group</button>
+<div><p id ="Infobox"> Hello!</p></div>
+
 <style>
-	.bar {
+	.barr {
 	  fill: steelblue;
 	}
 	.bar:hover {
 	  fill: brown;
 	}
+	.cool:hover{
+	fill: steelblue;
+	}
+	.toolTip {
+  position: absolute;
+  display: none;
+  min-width: 80px;
+  height: auto;
+  background: repeat scroll 0 0 #9affb8;
+  padding: 12px;
+  text-align: center;
+  opacity: 0.9
+}
 </style>
 <script src="https://d3js.org/d3.v5.min.js"></script>
 <script>
-var data1 = [{Name:"hej",Order:1,Skills:[5,7,9,4],Interest:1},{Name:"ble",Order:2,Skills:[5,1,8,7],Interest:2},{Name:"flu",Order:3,Skills:[8,7,3,9],Interest:5},{Name:"bluuuuu",Order:7,Skills:[2,10,14,24],Interest:2}]
+solo = false;
+var Fancy = ['Information Visualization Skills','Statistical Skills','Mathematical Skills','Drawing and Artistic Skills','Computer Usage Skills','Programming Skills','Computer Graphics Programming Skills','Human-computer Interaction Programming Skills','User Experience Evaluation Skills','Communication Skills','Collaboration Skills','Code Repository Skills'];
+var Skills = ['VisSkills','StatSkills','MathSkills','DrawSkills','UseSkills','ProgSkills','GxSkills','IntSkills','EvSkills','ComSkills','CollabSkills','GitSkills'];
+//var data1 = [{Name:"hej",Order:1,Skills:['Pro','Fal'],Interest:1,Pro:7,Fal:5},{Name:"ble",Order:2,Skills:['Pro','Fal'],Fal:2,Pro:5},{Name:"flu",Order:3,Skills:['Pro','Fal'],Interest:5,Pro:10,Fal:9},{Name:"bluuuuu",Order:7,Skills:['Pro','Fal'],Interest:2,Pro:2,Fal:7}]
 var svg = d3.select("svg"),
 margin = {
 	top: 20,
 	right: 20,
 	bottom: 30,
-	left: 50
+	left: 20
 },
 width = +svg.attr("width") - margin.left - margin.right,
 height = +svg.attr("height") - margin.top - margin.bottom,
-g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+g = svg.append("g").attr("transform", "translate(" + margin.left  + "," + margin.top + ")");
 var parseTime = d3.timeParse("%d-%b-%y");
-/*var x = d3.scaleBand()
-	.rangeRound([0, width])
-	.padding(0.1);
-*/
-var	x = d3.scaleBand()
-    .domain(data1.map(d => d.Name))
-    .rangeRound([margin.left, width - margin.right])
-    .padding(0.08)
-var y = d3.scaleLinear()
-	.rangeRound([height, 0]);
-var ferg = [d3.color("blue"),d3.color("red"),d3.color("yellow"),d3.color("green")]
+var ferg = [d3.color("#6ed3cf"),d3.color("#9068be"),d3.color("#3a4660"),d3.color("#c9af98"),d3.color("#ed8a63"),d3.color("#845007"),d3.color(" #feda6a"),d3.color("#393f4d"),d3.color("#1d1e22"),d3.color("#7dce94"),d3.color("#3d3d3f"),d3.color("#bd8c7d")]
 
-d3.csv("morley.tsv", function(error, data) {
-	console.log("error")
-	console.log(data, "inte error")
-});
+var rawData; 
+var tooltip = d3.select("body").append("div").attr("class", "toolTip");
+var infoBox = d3.select("#Infobox")
+y = d3.scaleLinear()
+		.rangeRound([height, 0]);
 
-var bluu = function (data) {
-	console.log(data);
+
+
+
+var bluu = function (data,kind) {
+
+	x = d3.scaleBand()
+    //.domain(data.map(d => d.Name))
+    .rangeRound([margin.left, width+20 - margin.right])
+    .padding(0.18)
+
+	//if (kind == "single"){
+		y.domain([0,90]);
+	//}else{
+	//	y.domain([0,400])
+	//}
+	
+
+	//console.log(data);
 	x.domain(data.map(function (d) {
+		console.log(d.Name)
 			return d.Name;
 		}));
-	y.domain([0,100]);
-
-	g.append("g")
+		//console.log(d3.range(1,11))
+	
+	g.append("g").attr("class", kind)
     .selectAll("g")
-    .data(data)
+    .data(data, d => d.Name)
 	.enter().append("g")
-	.attr("fill", d3.color("blue"))
+	.attr("class",d => d.Name)
     .selectAll("rect")
     .data(d => {
-		console.log(d,"argggg");
+		//console.log(data,d,"argggg");
+		outerlist = [];
+		Skills.forEach(e => {
 		var list = [];
-		var nyvar = 0;
-		var count = 0;
-		d.Skills.forEach(e => {
-		var nyobj =	Object.assign(d);
-		console.log(nyobj,"check");
-		nyobj.Skills = e+"";
-		console.log(nyobj,"vluffsdfuuu");
-		nyobj.Y1 = nyvar+""
-		nyobj.folor = count;
-		count ++;
-		list.push(JSON.parse(JSON.stringify(nyobj)));
-		nyvar += Number(nyobj.Skills);
+		list.push(e);
+		list.push(d);
+		outerlist.push(JSON.parse(JSON.stringify(list)));
 		});
-		console.log(list, "bluuuuu");
-		return list;
-	})
+		return (outerlist)
+	}, d => {
+		return d[0]
+	} )
 	.enter().append("rect")
-	  .attr("fill", d=> ferg[d.folor] )
-      .attr("x", d => x(d.Name))
-	  .attr("y", d =>  y(Number(d.Y1)+Number(d.Skills)))
-	  .attr("height", d => y(0)-y(Number(d.Skills)))
+	  //.attr("fill", d=> ferg[d.folor] )
+       .attr("fill", d => {
+                //console.log(Skills.indexOf(d[0]),farg[Skills.indexOf(d[0])]);
+                return ferg[Skills.indexOf(d[0])];})
+		.on("mousemove", function(d){
+		tooltip
+			.style("left", d3.event.pageX - 50 + "px")
+			.style("top", d3.event.pageY - 70 + "px")
+			.style("display", "inline-block")
+			.html(()=>{
+				if (kind == "single" || kind =="solo"){
+				return ((d[1].Name) + "<br>" + "" + Fancy[Skills.indexOf(d[0])] +" : "+ d[1][d[0]] );
+				}
+				else{
+				return d[1].Name +"<br>" + "" + Fancy[Skills.indexOf(d[0])] +" : "+ parseInt(d[1][d[0]]*5) ;
+				}
+			})
+		infoBox
+		.html(()=>{
+			if (kind == "single" || kind =="solo"){
+				return ((d[1].Name) + "<br> Degree:" + d[1].Degree + "<br> Hobbies : "+ d[1].Hobbies );
+				}
+				else{
+					var theNames = "";
+				d[1].allNames.forEach(f => {
+					theNames += " "+f+","
+				}) 
+				//console.log(theNames)
+				return theNames +"<br>" + "" + Fancy[Skills.indexOf(d[0])] +" : "+ parseInt(d[1][d[0]]*5) ;
+				}
+		})
+        })
+    		.on("mouseout", function(d){ tooltip.style("display", "none");})
+      .attr("x", d => x(d[1].Name))
+	.attr("class","bar")
+	.attr("class", d => d[0])
+	  .attr("y", d =>  {
+		var skill = d[0];
+		var pers = d[1];
+		var value = pers[skill];
+		//console.log("wat",skill,pers,value,"bleee");
+		var index = Skills.indexOf(skill);
+		var y1 = 0;
+		for (i = 0; i < index; i++){
+			y1 += Number(pers[Skills[i]]);
+		}
+		//console.log(y1,d);
+		return (y(Number(y1)+Number(value)));
+		
+	})
+
+	  .attr("height", d =>{ 
+		var skill = d[0];
+		var pers = d[1];
+		var value = pers[skill];
+		return( y(0)-y(Number(value)))
+	
+	})
 	  //.attr("bullshit", d.Skills)
       .attr("width", x.bandwidth());
 
 
 	g.append("g")
 	.attr("transform", "translate(0," + height + ")")
-	.call(d3.axisBottom(x));
+	.call(d3.axisBottom(x).tickSizeOuter(0).tickFormat((d,k) => {
+		if (kind == "solo"){ return d}
+		else if (kind === "groupings"){ return d}
+		else if (k == 28){ return "Largest ---------------- Smallest Value";}
+		else{
+		return ""
+		}
+	}))
+	.attr("class",kind);
 
 	g.append("g")
-	.call(d3.axisLeft(y))
+	.call(d3.axisLeft(y)).attr("class", kind)
 	.append("text")
 	.attr("fill", "#000")
 	.attr("transform", "rotate(-90)")
@@ -115,13 +251,357 @@ var bluu = function (data) {
 	  
 
 }
-//data1.sort(function(a,b){return b.Interest - a.Interest});
-//bluu(JSON.parse(JSON.stringify(data1)));
-function sorting(){
-	console.log("click!");
-	data1.sort((a, b) => a.Order - b.Order);
-	console.log(data1);
-	g.selectAll("*").remove();
-	bluu(JSON.parse(JSON.stringify(data1)));
+
+d3.tsv("IVIS19.tsv").then(function(data) {
+	//console.log(data, "inte error")
+	rawData = data;
+	rawData.pop();
+	console.log(rawData);
+
+
+	rawData.forEach(x =>{
+		x.Brevity = x.Hobbies.length + x.Learn.length
+	})
+	console.log(rawData);
+	//rawData.sort(function(a,b){return b.VisSkills - a.VisSkills});
+
+	bluu(rawData,"single");
+
+	//g.selectAll(".single").style("display","none")
+
+	var data = rawData;
+
+
+
+
+	theNames = "";
+
+
+// change sorting that's X 
+	d3.select("#selector").on("change", function() {
+		var selectedValue = d3.select("#selector").property('value')
+  data.sort((a, b) => (b[selectedValue] - a[selectedValue]))
+  if (d3.select(".shed").property("checked")){
+	var newgroups = makingShed(data);
+  }
+  else{
+	var newgroups = makingGroups(data,selectedValue);
+  }
+  groupdata = newgroups;
+
+  x.domain(data.map(function(d, i) {
+    return d.Name;
+  }));
+  g.selectAll(".single")
+  .selectAll("rect")
+    .transition()
+    .duration(500)
+    .attr("x", function(d,i) {
+      return x(d[1].Name);
+    })
+
+if (solo){
+	sing.sort((a, b) => (b[selectedValue] - a[selectedValue]))
+	x.domain(sing.map(function(d, i) {
+    return d.Name;
+  }));
+  g.selectAll(".solo")
+  .selectAll("rect")
+    .transition()
+    .duration(500)
+    .attr("x", function(d,i) {
+      return x(d[1].Name);
+    })
+
 }
+
+
+	g.selectAll(".groupings")
+		.selectAll("rect")
+		.on("mousemove", function(d){
+		tooltip
+			.style("left", d3.event.pageX - 50 + "px")
+			.style("top", d3.event.pageY - 70 + "px")
+			.style("display", "inline-block")
+			.html(()=>{
+				newgroups.forEach(k =>{
+				if (k.Name == d[1].Name){
+					theNames ="";
+				d[1] = k;
+			}})
+			return d[1].Name +"<br>" + "" + Fancy[Skills.indexOf(d[0])] +" : "+ parseInt(d[1][d[0]]*5) ;
+		})
+		infoBox
+			.html(()=>{
+				newgroups.forEach(k =>{
+				if (k.Name == d[1].Name){
+					theNames ="";
+				d[1] = k;
+				d[1].allNames.forEach(f => {
+					theNames += " "+f+","
+				})
+			}})
+			return theNames +"<br>" + "" + Fancy[Skills.indexOf(d[0])] +" : "+ parseInt(d[1][d[0]]*5) ;
+		})
+	}) 
+	.transition()
+    .duration(500)
+	.attr("y", d =>  {
+		var skill = d[0];
+		var pers = d[1];
+		newgroups.forEach(k =>{
+			if (k.Name == d[1].Name){
+				console.log(k,d[1])
+				pers = k;
+				
+			}
+		});
+		var value = pers[skill];
+		var index = Skills.indexOf(skill);
+		var y1 = 0;
+		for (i = 0; i < index; i++){
+			y1 += Number(pers[Skills[i]]);
+		}
+		return (y(Number(y1)+Number(value)));
+	})
+	.attr("height", d =>{ 
+		var skill = d[0];
+		var pers = d[1];
+		newgroups.forEach(k =>{
+			if (k.Name == d[1].Name){
+				pers = k;
+			//console.log(k,d[1]);
+			}
+		});
+		var value = pers[skill];
+		return(y(0)-y(Number(value)))
+	
+	})
+})
+
+
+
+// change filter! that's Y
+d3.selectAll(".filter").on("change", ()=>{
+	var filter = [];
+	var nySkill = document.getElementById("filtret").children;
+	for (i=0; i<nySkill.length;i++){
+		if(!nySkill[i].checked)
+		filter.push(nySkill[i].value);
+	}
+	newfilter(data,filter,".single");
+	newfilter(groupdata,filter,".groupings");
+	if (solo){ newfilter(sing,filter,".solo");
+	}
+	})
+
+
+	function newfilter(data,filter,kind) {
+	var newdata = JSON.parse(JSON.stringify(data))
+
+	newdata.forEach(d => {
+		filter.forEach(x => {
+			d[x]= 0+""
+			//console.log(d,x)
+		})
+		})
+	g.selectAll(kind)
+	.selectAll("rect")   
+	.transition()
+    .duration(500)
+	  .attr("y", d =>  {
+		var skill = d[0];
+		var pers = d[1];
+		newdata.forEach(k =>{
+			if (k.Name == d[1].Name){
+				pers = k;
+			//console.log(k,d[1]);
+			}
+		});
+		//console.log(pers,"mehe")
+		//console.log(d[1],pers,skill,"uga uga")
+		var value = pers[skill];
+		//console.log("wat",skill,pers,value,"bleee");
+		var index = Skills.indexOf(skill);
+		var y1 = 0;
+		for (i = 0; i < index; i++){
+			y1 += Number(pers[Skills[i]]);
+		}
+		if (value == 0){
+			//console.log(value,y1,y(Number(y1)+Number(value)),y(0)-y(Number(value)),skill,pers)
+			return(0);
+		}
+		//console.log(y1,d);
+		return (y(Number(y1)+Number(value)));
+		
+	})
+	  .attr("height", d =>{ 
+		var skill = d[0];
+		var pers = d[1];
+		newdata.forEach(k =>{
+			if (k.Name == d[1].Name){
+				pers = k;
+			//console.log(k,d[1]);
+			}
+		});
+		var value = pers[skill];
+		if (value == 0){
+			//console.log("wasssss")
+			return 0;
+		} 
+		return(y(0)-y(Number(value)))
+	
+	})
+	}
+
+
+
+
+
+
+ function makingGroups(data,selectedValue){
+	 //selectedValue = "VisSkills"
+	 //var namn = {};
+	 if (selectedValue !== undefined){
+	 //console.log(data);
+	 //data.sort((a, b) => (b[selectedValue] - a[selectedValue]))
+	 console.log(data,"hello!")
+	 }
+	//var groupdata = [];
+	var groups = [{Name:"Group 1",Total:0,allNames:[]},{Name:"Group 2",Total:0,allNames:[]},{Name:"Group 3",Total:0,allNames:[]},{Name:"Group 4",Total:0,allNames:[]},{Name:"Group 5",Total:0,allNames:[]},{Name:"Group 6",Total:0,allNames:[]},{Name:"Group 7",Total:0,allNames:[]},{Name:"Group 8",Total:0,allNames:[]},{Name:"Group 9",Total:0,allNames:[]},{Name:"Group 10",Total:0,allNames:[]}]
+	groups.forEach(d =>{
+		 Skills.forEach(k => {
+			 d[k] = 0;
+		 })
+	 })
+	for(i = 0; i<5;i++){
+			for(j = 0; j<5;j++){
+		Skills.forEach( d=> {
+			groups[i][d] += parseFloat(data[(i*5)+j][d]/5)
+			})
+		groups[i].allNames.push(data[(i*5)+j].Name);
+		}
+	}
+	for(i = 0; i<5;i++){
+			for(j = 0; j<6;j++){
+		Skills.forEach( d=> {
+			groups[i+5][d] += parseFloat(data[(i*6)+j+25][d]/5)
+			})
+		groups[i+5].allNames.push(data[(i*6)+j+25].Name);
+		}
+	}
+
+	return groups;
+ }
+ groupdata = makingGroups(data);
+	console.log(groupdata,"fleee")
+	bluu(groupdata,"groupings");
+
+
+
+
+
+
+	function makingShed(data,selectedValue){
+		var checkers = Skills;
+	 if (selectedValue !== undefined){
+		checkers = [selectedValue]
+	 }
+	 var groups = [{Name:"Group 1",Total:0,allNames:[]},{Name:"Group 2",Total:0,allNames:[]},{Name:"Group 3",Total:0,allNames:[]},{Name:"Group 4",Total:0,allNames:[]},{Name:"Group 5",Total:0,allNames:[]},{Name:"Group 6",Total:0,allNames:[]},{Name:"Group 7",Total:0,allNames:[]},{Name:"Group 8",Total:0,allNames:[]},{Name:"Group 9",Total:0,allNames:[]},{Name:"Group 10",Total:0,allNames:[]}]
+	 groups.forEach(d =>{
+		 Skills.forEach(k => {
+			 d[k] = 0;
+		 })
+	 })
+	 console.log(groups)
+	 data.forEach(d => {
+		Min = groups[0];
+		groups.forEach(e =>{
+			//console.log(e.total,Min.total,e,Min,"walll")
+			if (e.Total < Min.Total){
+				Min = e;
+			}
+		})
+		// Min is lowest total group
+		checkers.forEach(tut => {
+			Min.Total += Number(d[tut]);
+		})
+		Skills.forEach(varje => {
+			Min[varje] += parseFloat(d[varje]/5);
+		})
+		Min.allNames.push(d.Name)
+	 })
+	 return groups
+ }
+//groupdata = makingShed(data);
+//	bluu(groupdata,"groupings");
+
+
+g.selectAll(".groupings").style("display","none")
+
+d3.select("#People").on("click", ()=> {
+	solo = false;
+	g.selectAll(".solo").remove();
+	g.selectAll(".groupings").style("display","none")
+	//bluu(data)
+	g.selectAll(".single").style("display","initial")
+	
+});
+
+d3.select("#Groups").on("click", ()=> {
+	solo = false;
+	g.selectAll(".solo").remove();
+	g.selectAll(".single").style("display","none")
+	g.selectAll(".groupings").style("display","initial")
+});
+
+d3.select("#Show").on("click", ()=> {
+	solo = true;
+	g.selectAll(".solo").remove();
+	g.selectAll(".single").style("display","none")
+	g.selectAll(".groupings").style("display","none")
+	var theGroup = d3.select("#selector2").property('value');
+	//console.log(groupdata,"hed")
+	groupdata.forEach(d=>{
+		if(theGroup == d.Name){
+			console.log("PLINGS!")
+		}
+	})
+	for(i=0;i<5;i++){
+		sing.push(data[i])
+	}
+	
+	bluu (sing,"solo")
+	var filter = [];
+	var nySkill = document.getElementById("filtret").children;
+	for (i=0; i<nySkill.length;i++){
+		if(!nySkill[i].checked)
+		filter.push(nySkill[i].value);
+
+	}
+	newfilter(sing,filter,".solo");
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+}).catch(function(error){
+	console.error(error)
+});
+
+
+
+
 </script>
