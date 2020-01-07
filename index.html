@@ -1,528 +1,643 @@
 <!DOCTYPE html>
-<head>
-</head>
-	<select id = "selector" style="margin:5px"> 
-		<option value="MathSkills">Mathematical Skills</option>
-		<option value="Order">Reverse Procrastionation</option>
-		<option value="GxSkills">Computer Graphics</option>
-		<option value="ComSkills">Communication Skills</option>
-		<option value="Interest">Hobbies & Interests</option>
-		<option value="ProgSkills">Programming</option>
-		<option value="EvSkills">Evaluation</option>
-		<option value="VisSkills">Visualization</option>
-		<option value="StatSkills">Statistics</option>
-		<option value="MathSkills">Mathematics</option>
-		<option value="DrawSkills">Art and Drawing</option>
-		<option value="Brevity">Brevity</option>
-		<option value="IntSkills">Human-computer Interaction</option>
-		<option value="CollabSkills">Collaboration Skills</option>
-		<option value="GitSkills">Code Repository Skills</option>
-		<option value="UseSkills">Computer Usage Skills</option>
-		
-	</select> <input type="checkbox" value="shhed" class="shed" name="shedding"> Sheduling (If there are groups the program will after sorting try to balance the groups on all Skills)
-	<br>
-	<div id="filtret"> 
-
-	</div>
-	<button type="button" id= "People">People</button>
-	<button type="button" id = "Groups">Groups</button>
-<svg width="1300" height="750"></svg>
-<select id = "selector2" style="margin:5px"> 
-		<option value="Group 1">Group 1</option>
-		<option value="Group 2">Group 2</option>
-		<option value="Group 3">Group 3</option>
-		<option value="Group 4">Group 4</option>
-		<option value="Group 5">Group 5</option>
-		<option value="Group 6">Group 6</option>
-		<option value="Group 7">Group 7</option>
-		<option value="Group 8">Group 8</option>
-		<option value="Group 9">Group 9</option>
-		<option value="Group 10">Group 10</option>
-
-
-		
-	</select>
-<button type="button" id = "Show">Show Group</button>
-<div><p id ="Infobox"> Hello!</p></div>
-
 <style>
 
-	rect:hover {
-	  fill: rgb(104, 93, 93);
-	}
-	.cool:hover{
-	fill: steelblue;
-	}
-	.toolTip {
+button {
   position: absolute;
-  display: none;
-  min-width: 80px;
-  height: auto;
-  background: repeat scroll 0 0 #9affb8;
-  padding: 12px;
-  text-align: center;
-  opacity: 0.9
+  top: 10px;
+  left: 10px;
 }
+input {
+  position: absolute;
+  top: 10px;
+  left: 100px;
+}
+div {
+  position: absolute;
+  top: 10px;
+  left: 400px;
+}
+.test{
+    left:700px
+}
+
+circle {
+  fill: none;
+  stroke: #c4c4c4;
+  stroke-width: 1.5px;
+}
+
 </style>
+<button>Click Me</button>  
+<input id="search" type="text" name="search"><br>
+<div>
+    <input type="radio" id="cube" name="cube" value="cube">
+           
+    <label for="cube">Cube</label>
+  </div>
+  <div class="test">
+    <input type="radio" id="test" name="test" value="test"
+           >
+    <label for="test">Test</label>
+  </div>
+<svg width="960" height="800"></svg>
 <script src="https://d3js.org/d3.v5.min.js"></script>
+<script src="https://unpkg.com/javascript-lp-solver/prod/solver.js"></script>
+<script src="./rings.js"></script>
 <script>
-solo = false;
-var Fancy = ['Information Visualization Skills','Statistical Skills','Mathematical Skills','Drawing and Artistic Skills','Computer Usage Skills','Programming Skills','Computer Graphics Programming Skills','Human-computer Interaction Programming Skills','User Experience Evaluation Skills','Communication Skills','Collaboration Skills','Code Repository Skills'];
-var Skills = ['VisSkills','StatSkills','MathSkills','DrawSkills','UseSkills','ProgSkills','GxSkills','IntSkills','EvSkills','ComSkills','CollabSkills','GitSkills'];
+
 var svg = d3.select("svg"),
-margin = {
-	top: 20,
-	right: 20,
-	bottom: 30,
-	left: 20
-},
-width = +svg.attr("width") - margin.left - margin.right,
-height = +svg.attr("height") - margin.top - margin.bottom,
-g = svg.append("g").attr("transform", "translate(" + margin.left  + "," + margin.top + ")");
-var parseTime = d3.timeParse("%d-%b-%y");
-var ferg = [d3.color("#6ed3cf"),d3.color("#9068be").brighter(1),d3.color("#3a4660").brighter(2),d3.color("#c9af98"),d3.color("#ed8a63").brighter(1),d3.color("#845007").brighter(2),d3.color(" #feda6a"),d3.color("#393f4d").brighter(3),d3.color("#FF69B4").brighter(1),d3.color("#7dce94"),d3.color("#3d3d3f").brighter(2),d3.color("#bd8c7d")]
-
-d3.selectAll("#filtret").selectAll('div').data(ferg).enter().append('div').html((d,i)=> {return Fancy[i]}).style("background-color",d=> d).style("float","left").append("input").attr("value",(d,i)=>{return Skills[i];}).attr("type","checkbox").attr("class","filter").property("checked",true);
-var rawData; 
-var tooltip = d3.select("body").append("div").attr("class", "toolTip");
-var infoBox = d3.select("#Infobox")
-y = d3.scaleLinear()
-		.rangeRound([height, 0]);
+    margin = {top: 30, right: 30, bottom: 30, left: 30},
+    width = +svg.attr("width") - margin.left - margin.right,
+    height = +svg.attr("height") - margin.top - margin.bottom,
 
 
 
-// create stuff function
-var bluu = function (data,kind) {
-
-	x = d3.scaleBand()
-    .rangeRound([margin.left, width+20 - margin.right])
-    .padding(0.18)
 
 
-		y.domain([0,90]);
-	
+    k = 6;
 
-	x.domain(data.map(function (d) {
-			return d.Name;
-		}));
+data1 = {};
+data1.matrix = [
+  {"type":0,"l1":0,"dist":  [0,1,1,2,1,2,2,3],},
+  {"type":1,"l1":1,"dist":   [1,0,2,1,2,1,3,2],},
+  {"type":1,"l1":2,"dist":  [1,2,0,1,2,3,1,2],},
+  {"type":1,"l1":3,"dist":  [2,1,1,0,3,2,2,1],},
+  {"type":1,"l1":4,"dist":   [1,2,2,3,0,1,1,2],},
+  {"type":1,"l1":5,"dist":  [2,1,3,2,1,0,2,1],},
+  {"type":1,"l1":6,"dist":   [2,3,1,2,1,2,0,1],},
+  {"type":1,"l1":7,"dist":  [3,2,2,1,2,6,1,0],},
+];
+d3.select("#test").on("click",()=>{
+    main(data2,k);
+});
+d3.select("#cube").on("click",()=>{
+    main(data1,k);
+});
+d3.select("button").on("click", function() {
+    var hej = document.getElementById("search").value
+    fetch('https://catvis.win.tue.nl/solarview/api/v1/ariadne/philosophy/legacy/?input=%5B'+ hej +'%5D&json=1&distance=euclidean&show=40')
+  .then((response) => {
+    return response.json();
+  })
+  .then((myJson) => {
+    main(myJson,k)
+  });
+  
+});
 
-	// create the actual bars
-	g.append("g").attr("class", kind)
-    .selectAll("g")
-    .data(data, d => d.Name)
-	.enter().append("g")
-	.attr("class",d => d.Name)
-    .selectAll("rect")
-    .data(d => {
-		outerlist = [];
-		Skills.forEach(e => {
-		var list = [];
-		list.push(e);
-		list.push(d);
-		outerlist.push(JSON.parse(JSON.stringify(list)));
-		});
-		return (outerlist)
-	}, d => {
-		return d[0]
-	} )
-	.enter().append("rect")
-       .attr("fill", d => {
-                return ferg[Skills.indexOf(d[0])];})
-		.on("mousemove", function(d){
-		tooltip
-			.style("left", d3.event.pageX - 50 + "px")
-			.style("top", d3.event.pageY - 70 + "px")
-			.style("display", "inline-block")
-			.html(()=>{
-				if (kind == "single" || kind =="solo"){
-				return ((d[1].Name) + "<br>" + "" + Fancy[Skills.indexOf(d[0])] +" : "+ d[1][d[0]] );
-				}
-				else{
-				return d[1].Name +"<br>" + "" + Fancy[Skills.indexOf(d[0])] +" : "+ parseInt(d[1][d[0]]*5) ;
-				}
-			})
-		infoBox
-		.html(()=>{
-			if (kind == "single" || kind =="solo"){
-				return ((d[1].Name) + "<br> Degree:" + d[1].Degree + "<br> Hobbies : "+ d[1].Hobbies );
-				}
-				else{
-					var theNames = "";
-				d[1].allNames.forEach(f => {
-					theNames += " "+f+","
-				}) 
-				return theNames +"<br>" + "" + Fancy[Skills.indexOf(d[0])] +" : "+ parseInt(d[1][d[0]]*5) ;
-				}
-		})
+
+
+main(data2,k)
+function main(data2,k){
+    svg.selectAll("g").remove()
+g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+colors =   ["#e41a1c","#377eb8","#4daf4a","#984ea3","#ff7f00","#ffff33","#a65628","#f781bf","#999999","#f0f0f0"];
+center = data2.matrix[0].dist;
+matrix = data2.matrix.map( item => item.dist);
+var buckets = bucketing([...center],k);
+    poses = center.slice(0).map(item => {
+        var count = 0;
+        buckets.forEach(placement => {
+            if (item>placement[3]){
+                count++;
+            }
         })
-    		.on("mouseout", function(d){ tooltip.style("display", "none");})
-      .attr("x", d => x(d[1].Name))
-	.attr("class","bar")
-	.attr("class", d => d[0])
-	  .attr("y", d =>  {
-		var skill = d[0];
-		var pers = d[1];
-		var value = pers[skill];
-		var index = Skills.indexOf(skill);
-		var y1 = 0;
-		for (i = 0; i < index; i++){
-			y1 += Number(pers[Skills[i]]);
-		}
-		return (y(Number(y1)+Number(value)));
-		
-	})
+        return count;
+    })
+    matrices = [];
+    centers = [];
+    original = [];
+    results = [];
+    difference = []
+    k++;
+    poses[0] = 0;
+    for (i = 0; i<k; i++){ 
+        matrices[i] = [];
+        centers[i] = [];
+        original[i] = [];
+    }
+    console.log("pos bis",poses);
+    
+    
 
-	  .attr("height", d =>{ 
-		var skill = d[0];
-		var pers = d[1];
-		var value = pers[skill];
-		return( y(0)-y(Number(value)))
-	
-	})
-      .attr("width", x.bandwidth());
-
-
-	g.append("g")
-	.attr("transform", "translate(0," + height + ")")
-	.call(d3.axisBottom(x).tickSizeOuter(0).tickFormat((d,k) => {
-		if (kind == "solo"){ return d}
-		else if (kind === "groupings"){ return d}
-		else if (k == 28){ return "Largest ---------------- Smallest Value";}
-		else{
-		return ""
-		}
-	}))
-	.attr("class",kind);
-
-	g.append("g")
-	.call(d3.axisLeft(y)).attr("class", kind)
-	.append("text")
-	.attr("fill", "#000")
-	.attr("transform", "rotate(-90)")
-	.attr("y", 6)
-	.attr("dy", "0.71em")
-	.attr("text-anchor", "end")
-	.text("Skill");
-
-	  
+poses.forEach((pos,index,source)=> {
+    centers[pos].push(center[index])
+    original[pos].push(index);
+    matrices[pos].push(matrix[index].filter((list,indexInner) => pos == poses[indexInner]))
+    });
+console.log(matrices,centers,original);
+for (var iii = 0; iii<k; iii++){
+    
+    if (matrices[iii].length > 0){
+         results[iii] = tsp(matrices[iii],centers[iii],original[iii],solver,matrix);
+        results[iii].ii = iii;
+        console.log(results[iii]);
+        console.log(results[iii].placements.reduce((sum,add) => sum + add))
+    }
+    
 
 }
-//load the data
-d3.tsv("IVIS19.tsv").then(function(data) {
-	rawData = data;
-	rawData.pop();
+var zoom = results.reduce((sum,add )=> sum<add["zoom"]?add["zoom"]:sum,0)
+console.log('zooom!',zoom)
+//if (zoom>1) results.forEach(item => item['radius']*= zoom);
+
+//console.log(results,results.filter(d => d),"FGDJSAFDSAFSD");
 
 
-	rawData.forEach(x =>{
-		x.Brevity = x.Hobbies.length + x.Learn.length
-	})
-	console.log(rawData);
+console.log(results);
 
 
-	bluu(rawData,"single");
+if (results[0]){
+    results[0].neg = 1;
+    results[0].turn = 0;
+}
+extra = [];
+for(var i = 1;i<k; i++){ // calculate positions of rotation and direction
+    extra[i] = [];
+    if (results[i]){
+    var points = Object.assign({}, results[i]); 
+    points.id = points.shortestCycle;
+    counter = 0;
+    points.pos =[];
+    points.rot = [];
+    for (var turn = 0; turn < 2*Math.PI; turn += Math.PI/10 ){
+        for (var neg = 1; neg > -2 ; neg-=2){
+            points.rot[counter] = {"turn":turn,"neg":neg};
+            if(points.shortestCycle) points.pos[counter] = points.placements.map((item,index) => mod(neg*item+turn,Math.PI*2));
+            counter++
+        }
+    }
+    data = distortionCalculator(i,points,results,matrix,extra);
+    console.log('data extra',data.extra);
+    difference[i] = data.bestDif;
+    console.log(results[i])
+        results[i].rota = points.rot[data.bestPlacement];
+        results[i].turn = points.rot[data.bestPlacement].turn;
+        results[i].neg = points.rot[data.bestPlacement].neg;
+        if (results[i].neg == -1){
+            results[i].placements.reverse();
+            results[i].shortestCycle.reverse();
+            results[i].center.reverse();
+            results[i].distances.reverse();
+        }
+        results[i].placements = results[i].placements.map( pos => {
+            //console.log('posss',results[i].rota,pos, mod((pos*results[i].neg + results[i].turn),(Math.PI*2)));
+            return mod((pos + results[i].turn),(Math.PI*2))
+        });
+    }
+}
+//results.forEach((result,index) => results[index].placements = result.placements.map( pos =>  mod((pos*result.neg + result.turn),(Math.PI*2))));
+console.log("bling",difference,results);
+totalDiff = results.map( item=> Infinity);
+sumDiff = Infinity;
+nn =0;
+improving = true;
+while (improving && nn< 1000){
+    for(var i = 0;i<k; i++){
+
+        if (results[i]){
+            results[i].shortestCycle.forEach((item,index,source) =>{ 
+                forbidden = [];
+                if (source.length > 1 ){
+                    bl= 1;
+                forbidden.push([results[i].placements[mod((index-1),results[i].placements.length)]+ matrix[item][source[mod((index-1),results[i].placements.length)]]/(results[i].radius* 1),
+                    results[i].placements[mod((index+1),results[i].placements.length)]- matrix[item][source[mod((index+1),results[i].placements.length)]]/(results[i].radius* 1)])
+                    ;
+                   if(item=="9") console.log([results[i].placements[mod((index+1),results[i].placements.length)]- matrix[item][source[mod((index+1),results[i].placements.length)]]/(results[i].radius* 1)
+                     , results[i].placements[mod((index-1),results[i].placements.length)]+ matrix[item][source[mod((index-1),results[i].placements.length)]]/(results[i].radius* 1)],
+                     " haha",index,results[i].placements[index],
+                     results[i].placements[mod((index-1),results[i].placements.length)], matrix[item][source[mod((index-1),results[i].placements.length)]],"piss",(results[i].radius* 1),
+                     results[i].placements[mod((index+1),results[i].placements.length)],
+                      matrix[item][source[mod((index+1),results[i].placements.length)]],
+                      (results[i].radius* 1)
+                     , results[i].placements[mod((index-1),results[i].placements.length)],
+                      matrix[item][source[mod((index-1),results[i].placements.length)]],
+                      (results[i].radius* 1),results[i].placements[index])
+                    //forbidden på index +-1 max och min värden
+                }
+                if (i > 0){
+                for(var j = 0;j<i; j++){
+                    if (results[j]){ 
+                        results[j].placements.forEach( (innerItem,innerIndex) =>{ 
+                            var non = (matrix[item][results[j].shortestCycle[innerIndex]] -(results[i].radius - results[j].radius))/(results[j].radius* 1);
+                            if( non > 0)forbidden.push([mod((innerItem-non),(Math.PI*2)),mod((innerItem+non),(Math.PI*2))]);
+                            //if( non > 0)console.log([mod((innerItem-non),(Math.PI*2)),mod((innerItem+non),(Math.PI*2))],"weooo",Array.from(forbidden));
+                            //if(!( non > 0)) console.log('non',non,i,j);
+                            //forbidden områden från ringar längre in.
+                        })
+                    }
+                }
+            }
+            fcopy = Array.from(forbidden);
+            var forbiddenDone = [];
+            if (forbidden.length>0) {forbiddenDone = forbiddenCalculator(forbidden);
+            console.log("bof!",forbidden,fcopy,forbiddenDone,"iiii",i,nn,results[i].placements[index],
+            mod(results[i].placements[mod((index-1),results[i].placements.length)]- matrix[item][source[mod((index-1),results[i].placements.length)]]/results[i].radius,Math.PI*2));
+            // här ska skrivas test på forbidden, så den bara består av forbidden delarna, vars edges är de platser vi kollar
+            var points = Object.assign({}, results[i]); 
+            points.id = [item];
+            points.rot = [];
+            points.pos = forbiddenDone.reduce((sum,add)=> [...sum,...add],[points.placements[index]]).map(item => [item]);
+            data = distortionCalculator(i,points,results,matrix,extra,true);
+           // console.log(data,'data');
+            if (totalDiff[i]> data.bestDif){
+                console.log(points.pos[data.bestPlacement][0],i,"wat",item,index,totalDiff[i],data.bestDif);
+                results[i].placements[index] = points.pos[data.bestPlacement][0];
+                totalDiff[i] = data.bestDif;
+            }
+            }
+            })
+        }
+    }
+    var newDiff = totalDiff.reduce((sum,add)=> add==Infinity?sum:sum+add,0);
+    if ( newDiff>= sumDiff) improving = false;
+    console.log(totalDiff,nn,newDiff,sumDiff, newDiff >= sumDiff);
+    sumDiff = newDiff;
+    nn++;
+}
 
 
 
-	var data = rawData;
+
+console.log(results);
+var bla =radialDist( results,k,matrix.length);
+var bla2 =focusDist( results,k,matrix.length,matrix);
+svar =bla.map((item,index)=> item.map((innerItem,innerIndex)=> innerItem-matrix[index][innerIndex])).reduce((sum,add) => sum+ add.reduce((sum1,add1)=> sum1+add1),0)/(matrix.length*matrix[0].length);
+//svar = bla.reduce((sum,add) => sum+ add.reduce((sum1,add1)=> sum1+add1),0);
+svar2 = bla2.reduce((sum1,add1)=> sum1+add1);
+console.log(svar,svar2,bla2,"bal2",bla,matrix,bla.map((item,index)=> item.map((innerItem,innerIndex)=> innerItem-matrix[index][innerIndex])));
+
+console.timeEnd('test');
 
 
 
+var res3d = g.selectAll('g')
+            .data(results)
+            .join("g")
+            
+            res3d.append("g").append("circle")
+            .attr("r", (d,i)=> (i)*400/k)//results[iii].radius*200)
+            .attr("stroke-opacity", 1)
+            .attr("cy", height/2)
+            .attr("cx",  width/2);
+var knappar = g.append("g")
+            .selectAll('g')
+            .data(results.map((item,i)=> {item.ii = i; return item}).filter(d => d))
+            .join("g")
+            .append("g")
+            .selectAll("g")
+            .data((d,i) => {
+                return   d.placements.map( item => [item,d.ii])
+            })
+            .join("g")
+            .attr("transform", (da,i) =>{
+                //console.log(da,"egfdsg")
+                return"translate("+ (width/2+Math.cos(da[0])*(da[1])*400/k)+","+(height/2 +Math.sin(da[0])*(da[1])*400/k)+")"
+        })
+            //.append("text")
+            //.text('Hello!')
 
-	theNames = "";
+            knappar.append("circle")
+            .attr("r",10)
+            .attr("id", (de,i)=> results[de[1]].shortestCycle[i] )
+            .on("mouseover", (d,i)=>{
+               var list = [];
+               var other = [(width/2+Math.cos(d[0])*(d[1])*400/k),(height/2 + Math.sin(d[0])*(d[1])*400/k)];
+                results.forEach((item,index) => {
+                    item.placements.forEach( (innerItem,innerIndex) =>{ 
+                        //list.push(other);
+                        list.push([[[ (width/2+Math.cos(innerItem)*(index)*400/k),+(height/2 +Math.sin(innerItem)*(index)*400/k)],other],matrix[results[d[1]].shortestCycle[i]][results[index].shortestCycle[innerIndex]]])
+                    })
+                })
+                p = d3.line().context(null);
 
-// if a selection is made sort that sh't
-	d3.select("#selector").on("change", function() {
-		var selectedValue = d3.select("#selector").property('value')
-  data.sort((a, b) => (b[selectedValue] - a[selectedValue]))
-  if (d3.select(".shed").property("checked")){
-	var newgroups = makingShed(data);
-  }
-  else{
-	var newgroups = makingGroups(data,selectedValue);
-  }
-  groupdata = newgroups;
+                g.selectAll('path')
+                .data(list)
+                .join("path")
+                .attr("d",d => p(d[0]))
+                .attr("stroke", "black")
+                .attr("stroke-width", d=> (d[1])+"px")
 
-  x.domain(data.map(function(d, i) {
-    return d.Name;
-  }));
-  g.selectAll(".single")
-  .selectAll("rect")
-    .transition()
-    .duration(500)
-    .attr("x", function(d,i) {
-      return x(d[1].Name);
+            })
+            .on("mouseout", ()=>  g.selectAll('path').remove())
+            .on("click", function(d,i) {
+                var hej = data2.matrix[results[d[1]].shortestCycle[i]].l1;
+                fetch('https://catvis.win.tue.nl/solarview/api/v1/ariadne/philosophy/legacy/?input=%5B'+ hej +'%5D&json=1&distance=euclidean&show=40')
+            .then((response) => {
+                return response.json();
+            })
+            .then((myJson) => {
+                main(myJson,5)
+            });
+            
+            })
+            .attr("stroke-opacity", 1)
+            //.attr("cy",  height/2 +Math.sin(innerItem)*(index)*30)
+            //.attr("cx",  width/2+ Math.cos(innerItem)*item.radius*200   )
+            //.attr("cx", width/2 +Math.cos(innerItem)*(index)*30)//*item.radius*200   )
+
+            .style("fill", (de,i)=> {
+               return colors[data2.matrix[results[de[1]].shortestCycle[i]].type]
+            })
+            knappar.append("text")
+            .text((da,i)=> data2.matrix[results[da[1]].shortestCycle[i]].l1)
+            .attr("transform", (da,i) =>{
+                //console.log(da,"egfdsg")
+                return"translate("+ (Math.cos(da[0])*30-12)+","+(Math.sin(da[0])*20)+")"
+        })
+console.log('')
+// .attr("cy", item.shortestCycle[innerIndex]=="a6"? height/2 +Math.sin(2.3)*item.radius*200: height/2 +Math.sin(innerItem)*(index)*30)
+//             //.attr("cx",  width/2+ Math.cos(innerItem)*item.radius*200   )
+//             .attr("cx",  item.shortestCycle[innerIndex]=="a6"? width/2 +Math.cos(2.3)*item.radius*200: width/2 +Math.cos(innerItem)*(index)*30)//*item.radius*200   )
+}
+function tsp (distances,center,indis,solver,matrix){
+    var constraints = {};
+    var variables = {};
+    var ints = {};
+    var radi = 1*(center.reduce((sum, add)=> sum + add)/center.length);
+    if (distances.length<2){
+        console.log('korting')
+    results= {};
+    results["orginal"] = indis;
+    results["shortestCycle"] = [""+indis[0]];
+    results["placements"] = [2*Math.PI];
+    results["center"] = center;
+    results["radius"] = radi
+    results["distances"] = distances;
+    return results;
+    }
+    
+    distances.forEach( (row,index) => {
+        row.forEach((a,i)=>{
+            if (!(i <= index )){
+                variables[indis[index]+","+indis[i]]= {"distance":a, ["u"+indis[i]]: 1, ["d"+indis[i]]: 1,["u"+indis[index]]: 1, ["d"+indis[index]]: 1, "uses":1,"uses2":1,["i"+indis[index]+","+indis[i]]:1}
+                constraints["i"+indis[index]+","+indis[i]] = {'max':1};
+                ints[indis[index]+","+indis[i]]=1;
+            }
+        })
+    }) ;
+
+    for (b = 0; b < distances.length; b++) {
+        constraints["u"+indis[b]] = {"max": 2};
+        constraints["d"+indis[b]] = {"min": 2};
+    }
+    var solver = solver,
+    results,
+    model = {
+        "optimize": "distance",
+        "opType": "min",
+        "constraints": constraints,
+        "variables": variables,
+        "ints":ints
+    };
+    sub = 0;
+    notFull = true;
+    //console.log(model,'model')
+    while (notFull && sub < 100){
+        console.log(Object.assign(model,{}),'model');
+        results = solver.Solve(model);
+        console.log('resss',results,sub);
+        // get list of list of vertices in the edges used, if one is used twice get it twice.
+        var edges = Object.keys(variables).filter( item => item in results).concat(Object.keys(variables).filter( item => results[item]==2)).map( item => item.split(","));
+        var orgEdges = Object.keys(variables).filter( item => item in results);
+        var cycle = edges.map(item => []);
+        var shortestCycle = [];
+        for (i =0; i< edges.length; i++){
+            var lengths = 0;
+            var goal = edges[i][0];
+            var iter = edges[i][1];
+            var iterIndex = i;
+            cycle[i][0] = goal;
+            cycle[i][1] = iter;
+            notDone = true;
+            cyclePos = 1;
+            while (notDone && lengths < 1000 ){
+                cyclePos++;
+                lengths++;
+                theOne = edges.find( (element,index) => element.includes(iter) && index!=iterIndex);
+                index = theOne.findIndex(ele => ele == iter);
+                invertedIndex = +!index;
+                if (goal == theOne[invertedIndex]){
+                    notDone = false;
+                }else{
+                    iterIndex = edges.findIndex( (element,index) => element.includes(iter) && index!=iterIndex);
+                    iter = theOne[invertedIndex];
+                    cycle[i][cyclePos] = iter;
+                }
+
+            }
+            if ((cycle[i].length != 0 && cycle[i].length < shortestCycle.length) || shortestCycle.length == 0) shortestCycle = cycle[i]; 
+        }
+        minLength = Math.min(...cycle.map(item => item.length));
+        if (minLength >= distances.length){
+            notFull = false;
+        }else{
+             shortestCycleMulti = cycle.filter(item => item.length == minLength).filter((item,index,source)=> {
+                for (i=0;i<index;i++){
+                    if ( source[i].includes(item[0])) return false;
+                }
+                return true;
+            })
+            .map( item =>
+                Object.keys(model.variables).filter( innerItem => 
+                  2 == item.reduce((sum,num)  => (innerItem.split(",")[0] == num || innerItem.split(",")[1] == num)?sum+1:sum,0)
+                )
+            );
+            console.log(shortestCycleMulti,'fakkeee',i);
+            shortestCycleMulti.forEach((item,index) => item.forEach(superitem =>{ 
+            model.variables[superitem]["v"+sub+","+index]=1;
+            model.constraints["v"+sub+","+index] = {"max":minLength-1};
+            }));
+
+            }
+        sub++;
+    }
+    console.log(sub);
+    results["shortestCycle"] = shortestCycle;
+    results["shortest"] = indis.reduce((sum,add,index,source)=>{
+        return (sum += matrix[add][source[mod(add-1,indis.length)]])
     })
+    results["myShortest"] = shortestCycle.reduce((sum,add,index,source)=>{
+        return (sum += matrix[add][source[mod(add-1,indis.length)]])
+    },0)
+    results["orginal"] = indis;
+    placements = shortestCycle.map((matrixIndex,index,source) => index==0?matrix[matrixIndex][source[shortestCycle.length-1]]:matrix[matrixIndex][source[index-1]]);
+    console.log(placements,'badabim',placements.reduce((sum,add)=> sum+add),radi);
+    results["placements"] = placements.map(item => item*(2*Math.PI)/placements.reduce((sum,add) => sum + add));
+    console.log(placements,results["placements"],"answers")
+    results["center"] = center;
+    results["distances"] = distances;
+    for (ii = 1 ; ii < shortestCycle.length; ii++ ) {
+        results.placements[ii] += results.placements[ii-1];
+    }
+    results["radius"] = radi;//1.5*placements.reduce((sum,add)=> sum+add)/(2*Math.PI)
+    results["zoom"] =  placements.reduce((sum,add)=> sum+add)/(radi*2*Math.PI) ;
+    return results;
+}
 
-if (solo){
-	sing.sort((a, b) => (b[selectedValue] - a[selectedValue]))
-	x.domain(sing.map(function(d, i) {
-    return d.Name;
-  }));
-  g.selectAll(".solo")
-  .selectAll("rect")
-    .transition()
-    .duration(500)
-    .attr("x", function(d,i) {
-      return x(d[1].Name);
-    })
+
+function radialDist( results,k,nr){
+    var matrix1 = [];
+    for (var p = 0; p<nr; p++) matrix1[p] = [];
+    for (var i = 0; i<k; i++){
+        for(var j = 0;j<=i; j++){
+            if (results[i] && results[j]){ 
+                results[i].shortestCycle.forEach((item,index) =>{ 
+                    results[j].shortestCycle.forEach((innerItem,innerIndex) =>{ 
+                        matrix1[innerItem][item] = (results[i].radius -results[j].radius) + results[j].radius * 1 *
+                        (Math.abs(results[j].placements[innerIndex]- results[i].placements[index]) )
+                        matrix1[item][innerItem] = (results[i].radius -results[j].radius) + results[j].radius * 1 *
+                        (Math.abs(results[j].placements[innerIndex]- results[i].placements[index]) )
+                        // D (e1, e2) (r2 - r1) + r1 |angle 1 - angle 2|.
+                    })
+                })
+
+            }
+        }
+        }
+    
+    return matrix1;
+}
+function focusDist( results,k,nr,matrix){
+    var matrix1 = [];
+    //for (var p = 0; p<nr; p++) matrix1[p] = [];
+    for (var i = 0; i<k; i++){
+            if (results[i] ){ 
+                results[i].shortestCycle.forEach((item,index) =>{ 
+                        console.log("fopp",item,results[i],matrix[0][item],results[i].radius-matrix[0][item])
+                        matrix1[item] = (results[i].radius -matrix[0][item]); 
+                })
+
+            }
+        }
+    
+    return matrix1;
+}
+
+
+
+console.log(forbiddenCalculator([
+    [1,2],
+    [1.5,3],
+    [4,5],
+    [5.5,1.5],
+    [6,2]
+]));
+function forbiddenCalculator (source){
+    copy = Array.from(source);
+    newlist = [];
+    notDone = true;
+    source.sort((a,b) => a[0] - b[0]);
+    sortedcopy = Array.from(source);
+    front = source.shift();
+    if (front[0]> front[1]) front[1] +=(Math.PI*2);
+    while (source.length>0){
+        potent = source.shift();
+        //console.log(front,potent,newlist);
+        if (potent[0]> potent[1]) potent[1] +=(Math.PI*2);
+        //console.log(front[1],potent[0] ,potent[0]> front[1] ,newlist,"ute");
+        if (potent[0]> front[1]){
+            newlist.push([front[0],front[1]%(Math.PI*2)]);
+            front = potent;
+        }else{
+            front = [Math.min(front[0],potent[0]),Math.max(front[1],potent[1])]
+        }
+    }
+    //console.log(newlist,"nya saker",front,copy,sortedcopy);
+    if (front[1]>=(Math.PI*2)){
+        front[1] = front[1]%(Math.PI*2);
+        while (notDone && newlist.length >0){
+            //console.log(newlist,copy,front);
+            if(front[1]>=newlist[0][0]){ 
+                front[1] = Math.max(newlist.shift()[1],front[1]);
+            }else{
+                notDone = false;
+            }
+        }
+    }
+    newlist.push(front);
+        return newlist;
 
 }
 
 
-	g.selectAll(".groupings")
-		.selectAll("rect")
-		.on("mousemove", function(d){
-		tooltip
-			.style("left", d3.event.pageX - 50 + "px")
-			.style("top", d3.event.pageY - 70 + "px")
-			.style("display", "inline-block")
-			.html(()=>{
-				newgroups.forEach(k =>{
-				if (k.Name == d[1].Name){
-					theNames ="";
-				d[1] = k;
-			}})
-			return d[1].Name +"<br>" + "" + Fancy[Skills.indexOf(d[0])] +" : "+ parseInt(d[1][d[0]]*5) ;
-		})
-		infoBox
-			.html(()=>{
-				newgroups.forEach(k =>{
-				if (k.Name == d[1].Name){
-					theNames ="";
-				d[1] = k;
-				d[1].allNames.forEach(f => {
-					theNames += " "+f+","
-				})
-			}})
-			return theNames +"<br>" + "" + Fancy[Skills.indexOf(d[0])] +" : "+ parseInt(d[1][d[0]]*5) ;
-		})
-	}) 
-	.transition()
-    .duration(500)
-	.attr("y", d =>  {
-		var skill = d[0];
-		var pers = d[1];
-		newgroups.forEach(k =>{
-			if (k.Name == d[1].Name){
-				pers = k;
-				
-			}
-		});
-		var value = pers[skill];
-		var index = Skills.indexOf(skill);
-		var y1 = 0;
-		for (i = 0; i < index; i++){
-			y1 += Number(pers[Skills[i]]);
-		}
-		return (y(Number(y1)+Number(value)));
-	})
-	.attr("height", d =>{ 
-		var skill = d[0];
-		var pers = d[1];
-		newgroups.forEach(k =>{
-			if (k.Name == d[1].Name){
-				pers = k;
-			}
-		});
-		var value = pers[skill];
-		return(y(0)-y(Number(value)))
-	
-	})
-})
+
+
+function mod(n, m) {
+  return ((n % m) + m) % m;
+}
+
+
+function bucketing(data,k){
+    var output = [];
+    var fixed = data.map((item,index,source) => {
+    if (index!=0){
+        return [item-source[index-1],item,source[index-1], (item+source[index-1])/2,index]
+    }
+}).slice(1);
+    while (output.length< k){
+    console.log([...fixed],"fuck");
+    var first = fixed.sort((a,b)=> b[0] -a[0]).shift(0);
+    if (first[4]===1){
+        fixed.push([first[0]/2,first[1]/2,0,1]);
+    }else{
+    fixed.push([first[0]/2,first[1],first[3],(first[1]+first[3])/2,false]);
+    fixed.push([first[0]/2,first[3],first[2],(first[3]+first[2])/2,false]);
+    }
+    output.push(first);
+    }
+    return output;
+
+
+}
+
+function distortionCalculator(i,points,results,matrix,extra = [],countI = false){
+    var bestDif = Infinity;
+    var bestPos = 0;
+    var difference;
+    var bestPlacement =0;
+    console.log('pointsss',points,i)
+    for (var posIndex = 0; posIndex< points.pos.length; posIndex++){
+        difference = 0;
+        if( i > 0){
+        for(var j = 0;j<i; j++){
+            if (points && results[j]){ 
+                difference +=  points.id.reduce((sum,item,index) =>{ 
+                return (sum + results[j].shortestCycle.reduce((innerSum,innerItem,innerIndex) =>{ 
+                var distor = (((points.radius -results[j].radius) + results[j].radius *  1*
+                (Math.abs(results[j].placements[innerIndex]- points.pos[posIndex][index] ))) / matrix[item][innerItem])
+                // D (e1, e2) (r2 - r1) + r1 |angle 1 - angle 2|.
+                //console.log('distor',distor,i,posIndex,points.pos[posIndex][index],(points.radius -results[j].radius) + results[j].radius * 
+               // (Math.abs(results[j].placements[innerIndex]- points.pos[posIndex][index] )) , matrix[item][innerItem]);
+
+
+                
+                return( distor<1?innerSum+100:innerSum+distor)},0))},0)
+            }
+        }
+        }
+        if (results[i] && countI){
+            difference +=  points.id.reduce((sum,item,index) =>{ 
+                return (sum + results[i].shortestCycle.reduce((innerSum,innerItem,innerIndex) =>{ 
+                    if (item == innerItem) return 0;
+                var distor1 = (( results[i].radius *  1 *
+                (Math.abs((results[i].placements[innerIndex]) - points.pos[posIndex][index] ))) / matrix[item][innerItem])
+               // if ((item==15 && innerItem==18) ||(item==13 && innerItem==17)) console.log(distor1,'bam bam bam!', ( distor1<1?100:distor1));
+                return( distor1<1?innerSum+100:innerSum+distor1)},0))},0)
+        }
+        // console.log(difference[i],bestDif)
+        //extra[i][posIndex] = difference; 
+        if (difference < bestDif ){
+            bestDif = difference;
+            bestPlacement = posIndex;
+        }
+    }
+    //console.log(difference," diff ",i);
+    return {"bestDif":bestDif,"bestPlacement":bestPlacement,"extra":extra}
+    
+}
 
 
 
-// change filter! that's Y
-d3.selectAll(".filter").on("change", ()=>{
-	var filter = [];
-	var nySkill = document.getElementsByClassName("filter");
-	for (i=0; i<nySkill.length;i++){
-		if(!nySkill[i].checked)
-		filter.push(nySkill[i].value);
-	}
-	newfilter(data,filter,".single");
-	newfilter(groupdata,filter,".groupings");
-	if (solo){ newfilter(sing,filter,".solo");
-	}
-	})
-
-// the function that changes hieghts and y values to zero
-	function newfilter(data,filter,kind) {
-	var newdata = JSON.parse(JSON.stringify(data))
-
-	newdata.forEach(d => {
-		filter.forEach(x => {
-			d[x]= 0+""
-		})
-		})
-	g.selectAll(kind)
-	.selectAll("rect")   
-	.transition()
-    .duration(500)
-	  .attr("y", d =>  {
-		var skill = d[0];
-		var pers = d[1];
-		newdata.forEach(k =>{
-			if (k.Name == d[1].Name){
-				pers = k;
-
-			}
-		});
-
-		var value = pers[skill];
-		var index = Skills.indexOf(skill);
-		var y1 = 0;
-		for (i = 0; i < index; i++){
-			y1 += Number(pers[Skills[i]]);
-		}
-		if (value == 0){
-			return(0);
-		}
-		return (y(Number(y1)+Number(value)));
-		
-	})
-	  .attr("height", d =>{ 
-		var skill = d[0];
-		var pers = d[1];
-		newdata.forEach(k =>{
-			if (k.Name == d[1].Name){
-				pers = k;
-
-			}
-		});
-		var value = pers[skill];
-		if (value == 0){
-			return 0;
-		} 
-		return(y(0)-y(Number(value)))
-	
-	})
-	}
-
-
-
-
-
-// create groups based on sort
- function makingGroups(data,selectedValue){
-	 if (selectedValue !== undefined){
-	 }
-
-	var groups = [{Name:"Group 1",Total:0,allNames:[]},{Name:"Group 2",Total:0,allNames:[]},{Name:"Group 3",Total:0,allNames:[]},{Name:"Group 4",Total:0,allNames:[]},{Name:"Group 5",Total:0,allNames:[]},{Name:"Group 6",Total:0,allNames:[]},{Name:"Group 7",Total:0,allNames:[]},{Name:"Group 8",Total:0,allNames:[]},{Name:"Group 9",Total:0,allNames:[]},{Name:"Group 10",Total:0,allNames:[]}]
-	groups.forEach(d =>{
-		 Skills.forEach(k => {
-			 d[k] = 0;
-		 })
-	 })
-	for(i = 0; i<5;i++){
-			for(j = 0; j<5;j++){
-		Skills.forEach( d=> {
-			groups[i][d] += parseFloat(data[(i*5)+j][d]/5)
-			})
-		groups[i].allNames.push(data[(i*5)+j].Name);
-		}
-	}
-	for(i = 0; i<5;i++){
-			for(j = 0; j<6;j++){
-		Skills.forEach( d=> {
-			groups[i+5][d] += parseFloat(data[(i*6)+j+25][d]/5)
-			})
-		groups[i+5].allNames.push(data[(i*6)+j+25].Name);
-		}
-	}
-
-	return groups;
- }
- groupdata = makingGroups(data);
-	bluu(groupdata,"groupings");
-
-
-
-
-
-// try to fit the groups in smallest current group
-	function makingShed(data,selectedValue){
-		var checkers = Skills;
-	 if (selectedValue !== undefined){
-		checkers = [selectedValue]
-	 }
-	 var groups = [{Name:"Group 1",Total:0,allNames:[]},{Name:"Group 2",Total:0,allNames:[]},{Name:"Group 3",Total:0,allNames:[]},{Name:"Group 4",Total:0,allNames:[]},{Name:"Group 5",Total:0,allNames:[]},{Name:"Group 6",Total:0,allNames:[]},{Name:"Group 7",Total:0,allNames:[]},{Name:"Group 8",Total:0,allNames:[]},{Name:"Group 9",Total:0,allNames:[]},{Name:"Group 10",Total:0,allNames:[]}]
-	 groups.forEach(d =>{
-		 Skills.forEach(k => {
-			 d[k] = 0;
-		 })
-	 })
-	 data.forEach(d => {
-		Min = groups[0];
-		groups.forEach(e =>{
-			if (e.Total < Min.Total){
-				Min = e;
-			}
-		})
-		checkers.forEach(tut => {
-			Min.Total += Number(d[tut]);
-		})
-		Skills.forEach(varje => {
-			Min[varje] += parseFloat(d[varje]/5);
-		})
-		Min.allNames.push(d.Name)
-	 })
-	 return groups
- }
-
-
-// the buttons
-g.selectAll(".groupings").style("display","none")
-
-d3.select("#People").on("click", ()=> {
-	solo = false;
-	g.selectAll(".solo").remove();
-	g.selectAll(".groupings").style("display","none")
-	g.selectAll(".single").style("display","initial")
-	
-});
-
-d3.select("#Groups").on("click", ()=> {
-	solo = false;
-	g.selectAll(".solo").remove();
-	g.selectAll(".single").style("display","none")
-	g.selectAll(".groupings").style("display","initial")
-});
-
-d3.select("#Show").on("click", ()=> {
-	solo = true;
-	g.selectAll(".solo").remove();
-	g.selectAll(".single").style("display","none")
-	g.selectAll(".groupings").style("display","none")
-	var theGroup = d3.select("#selector2").property('value');
-	var listan ;
-	sing = [];
-	groupdata.forEach(d=>{
-		if(theGroup == d.Name){
-		listan = d.allNames
-		}
-	})
-	listan.forEach(d=>{
-		data.forEach(k=>{
-			if (k.Name == d){
-			sing.push(k);
-		}})
-		}
-	)
-	bluu (sing,"solo")
-	var filter = [];
-	var nySkill = document.getElementById("filtret").children;
-	for (i=0; i<nySkill.length;i++){
-		if(!nySkill[i].checked)
-		filter.push(nySkill[i].value);
-
-	}
-	newfilter(sing,filter,".solo");
-});
-
-
-}).catch(function(error){
-	console.error(error)
-});
 
 </script>
